@@ -2,7 +2,7 @@
 ### Parallel length computation of polyline created from coordinates on earth
 
 ## How to run on visual studio:
-Import DVA336_project.cpp into a new project.
+Import DVA336_project.cpp into a new c++ project.
 
 ### Enable openMP:
 1. Open the project's Property Pages dialog box.
