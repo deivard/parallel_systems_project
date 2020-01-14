@@ -9,7 +9,7 @@
 //#include <mm_malloc.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
-#define N 1000000
+#define N 10000000
 
 using namespace std;
 
@@ -333,20 +333,30 @@ int main()
 	convertLocationsArray(latitudes, longitudes, locations, N);
 	//printLocations(locations, N);
 
-	clock_t t = clock();
-	double distance = calculateDistance(locations, N);
-	t = clock() - t;
+	double tAcc = 0;
+	double t;
+	double distance;
+	for (size_t i = 0; i < 10; ++i) {
+		t = omp_get_wtime();
+		distance = calculateDistance(locations, N);
+		t = omp_get_wtime()  - t;
+		tAcc += t;
+	}
 	// Sequential time
 	cout <<"Sequential - Calculations for " << N << " locations" << endl
 		<< "Result: " << distance << endl
-		<< "Time: " << t << "ms" << endl;
-	//cout << t << endl;
-	t = clock();
-	//cout << t << endl;
-	double p_distance = _mm256d_calculateDistance(latitudes, longitudes, N);
-	t = clock() - t;
+		<< "Time (avg. from 10 iterations): " << tAcc*1000/10 << "ms" << endl;
+
+	double p_distance;
+	tAcc = 0;
+	for (size_t i = 0; i < 10; ++i) {
+		t = omp_get_wtime();
+		p_distance = _mm256d_calculateDistance(latitudes, longitudes, N);
+		t = omp_get_wtime() - t;
+		tAcc += t;
+	}
 	cout <<"Parallel - Calculations for " << N << " locations" << endl
 		<< "Result: " << p_distance << endl
-		<< "Time: " << t << "ms" << endl;
+		<< "Time (avg. from 10 iterations): " << tAcc*1000/10 << "ms" << endl;
 }
 
